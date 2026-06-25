@@ -43,5 +43,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/rules/rules').then((m) => m.Rules),
     title: 'תקנון · הפורום המשפחתי',
   },
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/admin/admin').then((m) => m.Admin),
+    title: 'ניהול · הפורום המשפחתי',
+  },
   { path: '**', redirectTo: '' },
 ];

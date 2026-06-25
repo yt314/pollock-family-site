@@ -181,6 +181,14 @@ export class ForumService {
     this.persist({ ...cur, posts: cur.posts.filter((p) => p.id !== postId) });
   }
 
+  editPost(postId: string, body: string): void {
+    const cur = this.state();
+    this.persist({
+      ...cur,
+      posts: cur.posts.map((p) => (p.id === postId ? { ...p, body: body.trim() } : p)),
+    });
+  }
+
   // ---- לייקים ----
 
   toggleLike(postId: string, name: string): void {
@@ -227,6 +235,30 @@ export class ForumService {
         t.id === threadId ? { ...t, views: (t.views ?? 0) + 1 } : t,
       ),
     });
+  }
+
+  // ---- גיבוי / שחזור ----
+
+  exportJson(): string {
+    return JSON.stringify(this.state(), null, 2);
+  }
+
+  // מחזיר true אם הייבוא הצליח (כולל אימות מבנה בסיסי)
+  importJson(raw: string): boolean {
+    try {
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.threads) || !Array.isArray(parsed.posts)) {
+        return false;
+      }
+      this.persist({ threads: parsed.threads, posts: parsed.posts });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  totals(): { threads: number; posts: number } {
+    return { threads: this.threads().length, posts: this.posts().length };
   }
 
   private uid(): string {

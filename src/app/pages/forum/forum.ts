@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ForumService } from '../../services/forum.service';
+import { ReadStateService } from '../../services/read-state.service';
 import { fileToResizedDataUrl } from '../../utils/image';
 import { timeAgo } from '../../utils/time';
 
@@ -58,6 +59,9 @@ import { timeAgo } from '../../utils/time';
                 <span class="t-main">
                   @if (t.pinned) { <span class="badge">📌 נעוץ</span> }
                   @if (t.locked) { <span class="badge lock">🔒 נעול</span> }
+                  @if (readState.isUnread(t.id, forum.lastActivity(t.id))) {
+                    <span class="badge new">חדש</span>
+                  }
                   <span class="t-title">{{ t.title }}</span>
                   <span class="t-meta">
                     פתח/ה {{ t.author }} · 👁 {{ t.views ?? 0 }} · תגובה אחרונה {{ ago(forum.lastActivity(t.id)) }}
@@ -116,6 +120,7 @@ import { timeAgo } from '../../utils/time';
       .t-meta { font-size: 0.8rem; color: var(--ink-faint); }
       .badge { display: inline-block; font-size: 0.72rem; color: var(--accent); font-weight: 600; margin-inline-end: 0.4rem; }
       .badge.lock { color: var(--ink-faint); }
+      .badge.new { background: #e23b3b; color: #fff; padding: 0.05rem 0.45rem; border-radius: 20px; }
       .t-replies { text-align: center; min-width: 56px; }
       .t-replies .num { display: block; font-weight: 700; color: var(--accent); }
       .t-replies .lbl { font-size: 0.7rem; color: var(--ink-faint); }
@@ -125,6 +130,7 @@ import { timeAgo } from '../../utils/time';
 })
 export class Forum {
   forum = inject(ForumService);
+  readState = inject(ReadStateService);
   private auth = inject(AuthService);
   private router = inject(Router);
 

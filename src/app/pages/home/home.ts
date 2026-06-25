@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ForumService } from '../../services/forum.service';
+import { ReadStateService } from '../../services/read-state.service';
 import { timeAgo } from '../../utils/time';
 
 @Component({
@@ -21,7 +22,12 @@ import { timeAgo } from '../../utils/time';
               <li>
                 <a [routerLink]="['/thread', t.id]" class="recent-row">
                   <span class="r-main">
-                    <span class="r-title">{{ t.title }}</span>
+                    <span class="r-title">
+                      @if (readState.isUnread(t.id, forum.lastActivity(t.id))) {
+                        <span class="new-badge">חדש</span>
+                      }
+                      {{ t.title }}
+                    </span>
                     <span class="r-meta">
                       ב{{ forum.getForum(t.forumId)?.title }} ·
                       תגובה אחרונה מאת {{ forum.lastPostAuthor(t.id) }} · {{ timeAgo(forum.lastActivity(t.id)) }}
@@ -51,7 +57,10 @@ import { timeAgo } from '../../utils/time';
                 <a [routerLink]="['/forum', f.id]" class="forum-row">
                   <span class="f-icon">{{ f.icon }}</span>
                   <span class="f-text">
-                    <span class="f-title">{{ f.title }}</span>
+                    <span class="f-title">
+                      {{ f.title }}
+                      @if (unreadInForum(f.id); as n) { <span class="new-count">{{ n }} חדש</span> }
+                    </span>
                     <span class="f-desc">{{ f.description }}</span>
                   </span>
                   <span class="f-stats">
@@ -83,6 +92,8 @@ import { timeAgo } from '../../utils/time';
       .r-title { font-weight: 600; color: var(--ink); }
       .r-meta { font-size: 0.78rem; color: var(--ink-faint); }
       .r-replies { font-size: 0.8rem; color: var(--ink-soft); white-space: nowrap; }
+      .new-badge { background: #e23b3b; color: #fff; font-size: 0.68rem; font-weight: 700; padding: 0.05rem 0.4rem; border-radius: 20px; margin-inline-end: 0.35rem; }
+      .new-count { background: #e23b3b; color: #fff; font-size: 0.68rem; font-weight: 700; padding: 0.05rem 0.45rem; border-radius: 20px; margin-inline-start: 0.45rem; }
 
       .category { margin-bottom: 2rem; }
       .cat-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; padding: 0 0.25rem; }
@@ -106,7 +117,14 @@ import { timeAgo } from '../../utils/time';
 })
 export class Home {
   forum = inject(ForumService);
+  readState = inject(ReadStateService);
   timeAgo = timeAgo;
 
   recent = computed(() => this.forum.recentThreads(6));
+
+  unreadInForum(forumId: string): number {
+    return this.forum
+      .threadsByForum(forumId)
+      .filter((t) => this.readState.isUnread(t.id, this.forum.lastActivity(t.id))).length;
+  }
 }

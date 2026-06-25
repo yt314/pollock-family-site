@@ -5,6 +5,7 @@
       <nav class="links">
         <a routerLink="/">הפורום</a>
         <a routerLink="/rules">תקנון</a>
+        @if (auth.isAdmin()) { <a routerLink="/admin">ניהול</a> }
       </nav>
       <form class="search" (ngSubmit)="search()">
         <input name="q" [(ngModel)]="searchTerm" placeholder="🔍 חיפוש בפורום" aria-label="חיפוש" />

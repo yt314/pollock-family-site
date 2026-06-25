@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ForumService } from '../../services/forum.service';
+import { ReadStateService } from '../../services/read-state.service';
 import { Post } from '../../models/forum.models';
 import { fileToResizedDataUrl } from '../../utils/image';
 import { timeAgo } from '../../utils/time';
@@ -58,29 +59,45 @@ import { timeAgo } from '../../utils/time';
                   <a class="author" [routerLink]="['/member', p.author]">{{ p.author }}</a>
                   <span class="when">{{ ago(p.createdAt) }}</span>
                   @if (first) { <span class="op-tag">פותח האשכול</span> }
-                  @if (auth.isAdmin() && !first) {
-                    <button class="del-post" (click)="forum.deletePost(p.id)" title="מחק תגובה">🗑</button>
-                  }
+                  <span class="head-controls">
+                    @if (canEdit(p)) {
+                      <button class="mini" (click)="startEdit(p)" title="עריכה">✎</button>
+                    }
+                    @if (canDelete(p, first)) {
+                      <button class="mini del" (click)="removePost(p.id)" title="מחיקה">🗑</button>
+                    }
+                  </span>
                 </div>
-                @if (p.body) {
-                  @let parsed = parse(p.body);
-                  @if (parsed.quote) { <blockquote class="quote">{{ parsed.quote }}</blockquote> }
-                  @if (parsed.text) { <p class="text">{{ parsed.text }}</p> }
+
+                @if (editingId() === p.id) {
+                  <div class="edit-box">
+                    <textarea [(ngModel)]="editText" rows="3"></textarea>
+                    <div class="edit-actions">
+                      <button (click)="saveEdit(p)">שמירה</button>
+                      <button type="button" class="ghost" (click)="cancelEdit()">ביטול</button>
+                    </div>
+                  </div>
+                } @else {
+                  @if (p.body) {
+                    @let parsed = parse(p.body);
+                    @if (parsed.quote) { <blockquote class="quote">{{ parsed.quote }}</blockquote> }
+                    @if (parsed.text) { <p class="text">{{ parsed.text }}</p> }
+                  }
+                  @if (p.image) { <img class="att" [src]="p.image" alt="תמונה מצורפת" /> }
+                  <div class="post-foot">
+                    <button
+                      class="like"
+                      [class.liked]="forum.hasLiked(p.id, me())"
+                      (click)="forum.toggleLike(p.id, me())"
+                    >
+                      {{ forum.hasLiked(p.id, me()) ? '❤️' : '🤍' }}
+                      @if (forum.likeCount(p.id)) { <span>{{ forum.likeCount(p.id) }}</span> }
+                    </button>
+                    @if (!t.locked) {
+                      <button class="quote-btn" (click)="quotePost(p)">צטט</button>
+                    }
+                  </div>
                 }
-                @if (p.image) { <img class="att" [src]="p.image" alt="תמונה מצורפת" /> }
-                <div class="post-foot">
-                  <button
-                    class="like"
-                    [class.liked]="forum.hasLiked(p.id, me())"
-                    (click)="forum.toggleLike(p.id, me())"
-                  >
-                    {{ forum.hasLiked(p.id, me()) ? '❤️' : '🤍' }}
-                    @if (forum.likeCount(p.id)) { <span>{{ forum.likeCount(p.id) }}</span> }
-                  </button>
-                  @if (!t.locked) {
-                    <button class="quote-btn" (click)="quotePost(p)">צטט</button>
-                  }
-                </div>
               </div>
             </article>
           }
@@ -141,8 +158,15 @@ import { timeAgo } from '../../utils/time';
       .author:hover { color: var(--accent); text-decoration: underline; }
       .when { font-size: 0.78rem; color: var(--ink-faint); }
       .op-tag { font-size: 0.7rem; background: var(--accent); color: #fff; padding: 0.1rem 0.5rem; border-radius: 20px; }
-      .del-post { margin-inline-start: auto; border: 0; background: transparent; cursor: pointer; font-size: 0.9rem; opacity: 0.5; }
-      .del-post:hover { opacity: 1; }
+      .head-controls { margin-inline-start: auto; display: flex; gap: 0.2rem; }
+      .mini { border: 0; background: transparent; cursor: pointer; font-size: 0.9rem; opacity: 0.45; padding: 0.1rem 0.3rem; border-radius: 6px; }
+      .mini:hover { opacity: 1; background: var(--bg-soft); }
+      .mini.del:hover { color: #c0392b; }
+      .edit-box textarea { width: 100%; box-sizing: border-box; padding: 0.6rem 0.85rem; border: 1px solid var(--accent-soft); border-radius: 10px; font-family: inherit; font-size: 0.98rem; resize: vertical; }
+      .edit-box textarea:focus { outline: 2px solid var(--accent); }
+      .edit-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+      .edit-actions button { padding: 0.4rem 1rem; border-radius: 8px; border: 0; font-family: inherit; font-weight: 600; cursor: pointer; background: var(--accent); color: #fff; font-size: 0.85rem; }
+      .edit-actions .ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
       .text { margin: 0; color: var(--ink-soft); line-height: 1.65; white-space: pre-wrap; word-wrap: break-word; }
       .att { margin-top: 0.6rem; max-width: 100%; border-radius: 10px; border: 1px solid var(--line); }
       .quote { margin: 0 0 0.6rem; padding: 0.5rem 0.85rem; border-inline-start: 3px solid var(--accent-soft); background: var(--bg-soft); border-radius: 0 8px 8px 0; color: var(--ink-faint); font-size: 0.9rem; white-space: pre-wrap; }
@@ -172,6 +196,7 @@ import { timeAgo } from '../../utils/time';
 export class Thread {
   forum = inject(ForumService);
   auth = inject(AuthService);
+  private readState = inject(ReadStateService);
   private router = inject(Router);
 
   id = input.required<string>();
@@ -186,6 +211,40 @@ export class Thread {
   err = signal(false);
   private replyBox = viewChild<ElementRef<HTMLTextAreaElement>>('replyBox');
 
+  editingId = signal<string | null>(null);
+  editText = '';
+
+  canEdit(p: Post): boolean {
+    return this.me() === p.author;
+  }
+
+  canDelete(p: Post, isFirst: boolean): boolean {
+    // לא מוחקים את ההודעה הפותחת (מחיקת אשכול שמורה למנהל); השאר — בעל ההודעה או מנהל
+    return !isFirst && (this.me() === p.author || this.auth.isAdmin());
+  }
+
+  startEdit(p: Post): void {
+    this.editingId.set(p.id);
+    this.editText = p.body;
+  }
+
+  cancelEdit(): void {
+    this.editingId.set(null);
+  }
+
+  saveEdit(p: Post): void {
+    if (this.editText.trim()) {
+      this.forum.editPost(p.id, this.editText);
+    }
+    this.editingId.set(null);
+  }
+
+  removePost(postId: string): void {
+    if (confirm('למחוק את התגובה?')) {
+      this.forum.deletePost(postId);
+    }
+  }
+
   // סופר צפייה אחת בכל כניסה לאשכול (פעם אחת לכל מזהה במופע הזה)
   private counted = new Set<string>();
   constructor() {
@@ -194,6 +253,7 @@ export class Thread {
       if (id && this.forum.getThread(id) && !this.counted.has(id)) {
         this.counted.add(id);
         this.forum.incrementViews(id);
+        this.readState.markSeen(id);
       }
     });
   }
