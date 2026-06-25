@@ -1,59 +1,124 @@
-# PollockFamilySite
+# פורום משפחת פולוק 🌳
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+פורום משפחתי **פרטי וסגור**, בהשראת מבנה וחווית המשתמש של פורומים מבוססי-קטגוריות
+("קטגוריות → פורומים → אשכולות → תגובות"), בעיצוב נקי ומכובד, בעברית מלאה (RTL).
 
-## Development server
+נבנה כאפליקציית Angular 21 (Standalone + Signals).
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## הרצה מקומית
 
 ```bash
-ng generate component component-name
+npm install
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+ואז לפתוח את `http://localhost:4200/`.
+
+**כניסה לדוגמה:** שם כלשהו + הסיסמה המשפחתית `tjkv dcr ycrhbh`
+(לשינוי הסיסמה ראו למטה).
+
+**כניסת מנהל:** שם כלשהו + סיסמת המנהל `admin-mishpacha` — מקנה הרשאות ניהול
+(נעיצה/נעילה/מחיקת אשכולות ומחיקת תגובות). שתי הסיסמאות מוגדרות ב-
+[`auth.service.ts`](src/app/services/auth.service.ts).
+
+לבנייה לפרודקשן:
 
 ```bash
-ng generate --help
+npm run build   # הפלט נכתב ל-dist/pollock-family-site
 ```
 
-## Building
+---
 
-To build the project run:
+## מבנה הפורום
 
-```bash
-ng build
-```
+מבנה הקטגוריות והפורומים מוגדר במקום אחד: [`src/app/data/seed.ts`](src/app/data/seed.ts).
+קל להוסיף/לערוך שם קטגוריות ופורומים.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+| קטגוריה | פורומים |
+|---|---|
+| 🏠 כללי וברוכים הבאים | הודעות ההנהלה · היכרות · קפה ופטפוט |
+| 🎉 שמחות ואירועים | מזל טוב · תיאום אירועים · תיאום שבתות וחגים · גלריית תמונות |
+| 🤝 עזרה הדדית | דרושה עזרה · יד שנייה במשפחה · המלצות ואנשי מקצוע |
+| 📖 נוסטלגיה ושורשים | אלבום המשפחה · אילן יוחסין · לזכרם |
+| 🍲 פינות תחביב | מתכונים · טיולים · בריאות ואורח חיים |
 
-## Running unit tests
+התוכן (אשכולות ותגובות) נשמר ב-`localStorage` של הדפדפן — מתאים ל-MVP והדגמה.
+למעבר למשפחה אמיתית עם תוכן משותף בין כל החברים צריך שרת (ראו "צעדים הבאים").
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+---
 
-```bash
-ng test
-```
+## אבטחה ופרטיות — חסימה מצפייה חיצונית וסריקת גוגל
 
-## Running end-to-end tests
+הדרישה: שאף אחד מחוץ למשפחה (כולל גוגל) לא יוכל לראות או למצוא את התוכן.
+האבטחה נבנית בשתי שכבות:
 
-For end-to-end (e2e) testing, run:
+### שכבה 1 — מה שכבר מוגדר בקוד הזה
+- **שער כניסה** ([`auth.service.ts`](src/app/services/auth.service.ts) + [`auth.guard.ts`](src/app/guards/auth.guard.ts)):
+  כל העמודים חסומים מאחורי סיסמה משפחתית משותפת. בלי סיסמה — מפנה לעמוד הכניסה.
+- **תגיות `noindex` ל-HTML** ([`src/index.html`](src/index.html)):
+  `noindex, nofollow, noarchive, nosnippet` + הנחיה ייעודית ל-Googlebot.
+- **`robots.txt` חוסם הכול** ([`public/robots.txt`](public/robots.txt)): `Disallow: /`.
+- **`referrer: no-referrer`** — מונע דליפת כתובת האתר ללינקים יוצאים.
 
-```bash
-ng e2e
-```
+> ⚠️ **חשוב:** שער הכניסה כאן הוא בצד-הלקוח בלבד. הוא מסתיר את הממשק, אבל אינו
+> מצפין את הנתונים ולא מספיק לבדו כשמדובר במידע רגיש. לפרטיות אמיתית צריך גם את שכבה 2.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### שכבה 2 — הגדרות שרת/אירוח (חובה לפני העלאה לאוויר)
+1. **הגנת סיסמה ברמת השרת (הכי חשוב):**
+   - Netlify: *Password protection* (תוכנית Pro) או Basic-Auth דרך `_headers`.
+   - Cloudflare Access / Cloudflare Pages: מדיניות גישה לפי רשימת אימיילים משפחתיים.
+   - Nginx/Apache: `.htpasswd` (Basic Auth) על כל האתר.
+   זה חוסם את התוכן עוד **לפני** שה-HTML נשלח לדפדפן — כך גם בוטים לא רואים כלום.
+2. **כותרת HTTP `X-Robots-Tag: noindex, nofollow`** בתגובת השרת — חזק יותר מתגית meta.
+3. **ללא דומיין "מתפרסם":** לא לשתף את הקישור ברשתות, לא לקשר אליו מאתרים אחרים
+   (גוגל מגלה אתרים בעיקר דרך קישורים נכנסים).
+4. **HTTPS בלבד** + להסיר את האתר מ-Search Console אם הופיע אי-פעם.
 
-## Additional Resources
+**שורה תחתונה:** התגיות ו-robots מונעות אינדוקס בגוגל; **הגנת הסיסמה ברמת השרת**
+(שכבה 2, סעיף 1) היא מה שבאמת חוסם צפייה חיצונית. השתמשו בשתיהן יחד.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### שינוי הסיסמה המשפחתית
+בקובץ [`src/app/services/auth.service.ts`](src/app/services/auth.service.ts), משתנה `FAMILY_PASSWORD`.
+
+---
+
+## תקנון הפורום
+
+תקנון מלא, מכובד וקצר נמצא בעמוד `/rules` באתר (קומפוננטה [`rules.ts`](src/app/pages/rules/rules.ts)).
+הוא מכסה: שיח מכבד, שפה נקייה, איסור לשון הרע ורכילות, שמירה על פרטיות המשפחה,
+תמונות באחריות, ופנייה דיסקרטית להנהלה במחלוקות.
+
+---
+
+## השוואה טכנית — איזו פלטפורמה לבחור?
+
+הפרויקט הזה הוא **MVP מותאם-אישית** שנותן בדיוק את המראה והפרטיות שביקשת. אם בעתיד
+תרצה מערכת פורומים "מלאה ומוכנה", הנה השוואה קצרה:
+
+| פלטפורמה | קלות תפעול | מראה נקי/מכובד | פרטיות וסגירות | מתאים אם... |
+|---|---|---|---|---|
+| **האתר הזה (Angular מותאם)** | בינונית (דורש מפתח לשינויים) | ✅ מלא ומדויק | ✅ נשלט לחלוטין | רוצים מראה ייחודי ושליטה מלאה |
+| **WordPress + תוסף (bbPress / Asgaros)** | ✅ הכי קל לאדם לא-טכני | טוב (תלוי תבנית) | טוב — תוספי "Private"/חברות חוסמים אורחים | המנהל לא-טכני ורוצה ניהול בלחיצות |
+| **phpBB** | בינונית (התקנה + עדכונים) | בסיסי/ישן, צריך עיצוב | ✅ הרשאות חזקות, חינמי | רוצים פורום קלאסי, בחינם, ויש מי שיתחזק |
+| **XenForo** | בינונית (בתשלום ~$160) | ✅ מודרני ומלוטש | ✅ מצוין | פורום גדול ופעיל, מוכנים לשלם |
+
+**ההמלצה שלי לפי הצורך:**
+- רוצה **לתחזק לבד בלי מתכנת** → **WordPress + תוסף פורום** (bbPress/Asgaros) עם תוסף
+  "Private Site" שמכריח התחברות. הכי פשוט למשפחה.
+- רוצה **מראה ייחודי ושליטה מלאה** ויש גישה למפתח → **האתר הזה** (כבר בנוי, נקי ומאובטח).
+- רוצה **פורום קלאסי וחינמי** ולא מפריע מראה ישן → **phpBB**.
+
+---
+
+## מה כבר קיים
+- ✅ מבנה קטגוריות/פורומים/אשכולות/תגובות מלא.
+- ✅ שער כניסה משפחתי + הרשאות **מנהל** (נעיצה / נעילה / מחיקת אשכולות ותגובות) דרך הממשק.
+- ✅ **העלאת תמונות** באשכולות ובתגובות (מוקטנות אוטומטית, מתאים לגלריה ולאלבום).
+- ✅ חסימת אינדוקס (noindex + robots.txt) ועיצוב RTL נקי.
+
+## צעדים הבאים (אם תרצה להרחיב)
+- **Backend אמיתי** (Firebase / Supabase / Node) כדי שהתוכן ישותף בין כל בני המשפחה,
+  עם משתמשים אישיים במקום סיסמה אחת משותפת (וכך גם התמונות לא יוגבלו לנפח ה-localStorage).
+- חיפוש בתוך הפורום, התראות, ותיוג בני משפחה.

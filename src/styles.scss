@@ -1,1 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+/* עיצוב גלובלי — נקי ומכובד, בהשראת פורומים מבוססי-קטגוריות (RTL) */
+
+:root {
+  --bg: #f4f6f9;
+  --bg-soft: #f8fafc;
+  --line: #e3e8ef;
+
+  --ink: #1f2a37;
+  --ink-soft: #44505f;
+  --ink-faint: #8a96a6;
+
+  --accent: #2f6f9f; /* כחול רגוע ומכובד */
+  --accent-dark: #255a82;
+  --accent-soft: #b9d4e8;
+  --accent-bg: #f1f7fc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Segoe UI', 'Heebo', 'Assistant', -apple-system, BlinkMacSystemFont, Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--accent);
+}
+
+::selection {
+  background: var(--accent-soft);
+}
