@@ -33,6 +33,7 @@ export interface Post {
   body: string;
   createdAt: number;
   image?: string; // תמונה מצורפת (data URL, נשמרת ב-localStorage)
+  likes?: string[]; // שמות בני המשפחה שאהבו את התגובה
 }
 
 // מצב מלא של הפורום כפי שנשמר ב-localStorage

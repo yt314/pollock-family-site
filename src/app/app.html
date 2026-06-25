@@ -10,7 +10,7 @@
         <input name="q" [(ngModel)]="searchTerm" placeholder="🔍 חיפוש בפורום" aria-label="חיפוש" />
       </form>
       <div class="user">
-        <span class="hi">שלום, {{ auth.displayName() }}</span>
+        <a class="hi" [routerLink]="['/member', auth.displayName()]">שלום, {{ auth.displayName() }}</a>
         @if (auth.isAdmin()) { <span class="admin-tag">מנהל</span> }
         <button (click)="logout()">יציאה</button>
       </div>

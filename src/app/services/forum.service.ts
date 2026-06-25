@@ -181,6 +181,44 @@ export class ForumService {
     this.persist({ ...cur, posts: cur.posts.filter((p) => p.id !== postId) });
   }
 
+  // ---- לייקים ----
+
+  toggleLike(postId: string, name: string): void {
+    const cur = this.state();
+    this.persist({
+      ...cur,
+      posts: cur.posts.map((p) => {
+        if (p.id !== postId) return p;
+        const likes = p.likes ?? [];
+        return likes.includes(name)
+          ? { ...p, likes: likes.filter((n) => n !== name) }
+          : { ...p, likes: [...likes, name] };
+      }),
+    });
+  }
+
+  hasLiked(postId: string, name: string): boolean {
+    return !!this.posts().find((p) => p.id === postId)?.likes?.includes(name);
+  }
+
+  likeCount(postId: string): number {
+    return this.posts().find((p) => p.id === postId)?.likes?.length ?? 0;
+  }
+
+  // ---- סטטיסטיקות לבן משפחה (לפי שם תצוגה) ----
+
+  threadsByAuthor(name: string): Thread[] {
+    return this.threads()
+      .filter((t) => t.author === name)
+      .sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  postsByAuthor(name: string): Post[] {
+    return this.posts()
+      .filter((p) => p.author === name)
+      .sort((a, b) => b.createdAt - a.createdAt);
+  }
+
   incrementViews(threadId: string): void {
     const cur = this.state();
     this.persist({
