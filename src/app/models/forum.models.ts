@@ -23,6 +23,7 @@ export interface Thread {
   createdAt: number;
   pinned?: boolean;
   locked?: boolean;
+  views?: number;
 }
 
 export interface Post {

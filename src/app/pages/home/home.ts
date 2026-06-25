@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ForumService } from '../../services/forum.service';
 import { timeAgo } from '../../utils/time';
@@ -12,6 +12,28 @@ import { timeAgo } from '../../utils/time';
         <h1>הפורום המשפחתי</h1>
         <p>הבית הדיגיטלי של המשפחה — לשמחות, לתיאום ולשמירה על קשר.</p>
       </header>
+
+      @if (recent().length) {
+        <section class="recent">
+          <h2 class="recent-title">🕒 אשכולות אחרונים</h2>
+          <ul class="recent-list">
+            @for (t of recent(); track t.id) {
+              <li>
+                <a [routerLink]="['/thread', t.id]" class="recent-row">
+                  <span class="r-main">
+                    <span class="r-title">{{ t.title }}</span>
+                    <span class="r-meta">
+                      ב{{ forum.getForum(t.forumId)?.title }} ·
+                      תגובה אחרונה מאת {{ forum.lastPostAuthor(t.id) }} · {{ timeAgo(forum.lastActivity(t.id)) }}
+                    </span>
+                  </span>
+                  <span class="r-replies">{{ forum.replyCount(t.id) }} 💬</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </section>
+      }
 
       @for (cat of forum.categories; track cat.id) {
         <section class="category">
@@ -51,6 +73,17 @@ import { timeAgo } from '../../utils/time';
       .hero h1 { font-size: 2rem; color: var(--ink); margin: 0 0 0.4rem; }
       .hero p { color: var(--ink-soft); margin: 0; }
 
+      .recent { margin-bottom: 2.5rem; }
+      .recent-title { font-size: 1.05rem; color: var(--ink); margin: 0 0 0.75rem; padding: 0 0.25rem; }
+      .recent-list { list-style: none; margin: 0; padding: 0; background: var(--accent-bg); border: 1px solid var(--accent-soft); border-radius: 14px; overflow: hidden; }
+      .recent-list li + li { border-top: 1px solid var(--accent-soft); }
+      .recent-row { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.25rem; text-decoration: none; color: inherit; transition: background 0.15s; }
+      .recent-row:hover { background: #e6f1f9; }
+      .r-main { display: flex; flex-direction: column; flex: 1; min-width: 0; gap: 0.15rem; }
+      .r-title { font-weight: 600; color: var(--ink); }
+      .r-meta { font-size: 0.78rem; color: var(--ink-faint); }
+      .r-replies { font-size: 0.8rem; color: var(--ink-soft); white-space: nowrap; }
+
       .category { margin-bottom: 2rem; }
       .cat-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; padding: 0 0.25rem; }
       .cat-icon { font-size: 1.6rem; }
@@ -74,4 +107,6 @@ import { timeAgo } from '../../utils/time';
 export class Home {
   forum = inject(ForumService);
   timeAgo = timeAgo;
+
+  recent = computed(() => this.forum.recentThreads(6));
 }

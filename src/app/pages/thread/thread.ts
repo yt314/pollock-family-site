@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -21,11 +21,14 @@ import { timeAgo } from '../../utils/time';
         </nav>
 
         <div class="title-row">
-          <h1 class="title">
-            @if (t.pinned) { <span class="badge">📌</span> }
-            @if (t.locked) { <span class="badge">🔒</span> }
-            {{ t.title }}
-          </h1>
+          <div>
+            <h1 class="title">
+              @if (t.pinned) { <span class="badge">📌</span> }
+              @if (t.locked) { <span class="badge">🔒</span> }
+              {{ t.title }}
+            </h1>
+            <div class="t-stats">👁 {{ t.views ?? 0 }} צפיות · 💬 {{ forum.replyCount(t.id) }} תגובות</div>
+          </div>
 
           @if (auth.isAdmin()) {
             <div class="admin-bar">
@@ -91,7 +94,9 @@ import { timeAgo } from '../../utils/time';
       .crumbs a { color: var(--accent); text-decoration: none; }
       .crumbs span { margin: 0 0.4rem; }
       .title-row { display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
-      .title { font-size: 1.5rem; color: var(--ink); margin: 0; flex: 1; }
+      .title { font-size: 1.5rem; color: var(--ink); margin: 0; }
+      .title-row > div:first-child { flex: 1; }
+      .t-stats { font-size: 0.8rem; color: var(--ink-faint); margin-top: 0.3rem; }
       .badge { margin-inline-end: 0.3rem; }
 
       .admin-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; }
@@ -143,6 +148,18 @@ export class Thread {
   text = '';
   image = signal<string | null>(null);
   err = signal(false);
+
+  // סופר צפייה אחת בכל כניסה לאשכול (פעם אחת לכל מזהה במופע הזה)
+  private counted = new Set<string>();
+  constructor() {
+    effect(() => {
+      const id = this.id();
+      if (id && this.forum.getThread(id) && !this.counted.has(id)) {
+        this.counted.add(id);
+        this.forum.incrementViews(id);
+      }
+    });
+  }
 
   initial(name: string): string {
     return name?.trim()?.charAt(0) ?? '?';

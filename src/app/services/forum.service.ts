@@ -65,6 +65,35 @@ export class ForumService {
     return this.threads().find((t) => t.id === threadId);
   }
 
+  // האשכולות הפעילים ביותר בכל הפורום — לפיד "אשכולות אחרונים" בדף הבית
+  recentThreads(limit = 8): Thread[] {
+    return [...this.threads()]
+      .sort((a, b) => {
+        const byActivity = this.lastActivity(b.id) - this.lastActivity(a.id);
+        return byActivity !== 0 ? byActivity : b.createdAt - a.createdAt;
+      })
+      .slice(0, limit);
+  }
+
+  lastPostAuthor(threadId: string): string {
+    const ps = this.postsByThread(threadId);
+    return ps.length ? ps[ps.length - 1].author : '';
+  }
+
+  // חיפוש חופשי באשכולות — לפי כותרת או תוכן התגובות
+  search(query: string): Thread[] {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    const matchingThreadIds = new Set(
+      this.posts()
+        .filter((p) => p.body.toLowerCase().includes(q))
+        .map((p) => p.threadId),
+    );
+    return this.threads()
+      .filter((t) => t.title.toLowerCase().includes(q) || matchingThreadIds.has(t.id))
+      .sort((a, b) => this.lastActivity(b.id) - this.lastActivity(a.id));
+  }
+
   postsByThread(threadId: string): Post[] {
     return this.posts()
       .filter((p) => p.threadId === threadId)
@@ -150,6 +179,16 @@ export class ForumService {
   deletePost(postId: string): void {
     const cur = this.state();
     this.persist({ ...cur, posts: cur.posts.filter((p) => p.id !== postId) });
+  }
+
+  incrementViews(threadId: string): void {
+    const cur = this.state();
+    this.persist({
+      ...cur,
+      threads: cur.threads.map((t) =>
+        t.id === threadId ? { ...t, views: (t.views ?? 0) + 1 } : t,
+      ),
+    });
   }
 
   private uid(): string {

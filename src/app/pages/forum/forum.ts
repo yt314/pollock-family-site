@@ -59,7 +59,10 @@ import { timeAgo } from '../../utils/time';
                   @if (t.pinned) { <span class="badge">📌 נעוץ</span> }
                   @if (t.locked) { <span class="badge lock">🔒 נעול</span> }
                   <span class="t-title">{{ t.title }}</span>
-                  <span class="t-meta">מאת {{ t.author }} · {{ ago(t.createdAt) }}</span>
+                  <span class="t-meta">
+                    פתח/ה {{ t.author }} · 👁 {{ t.views ?? 0 }} · תגובה אחרונה {{ ago(forum.lastActivity(t.id)) }}
+                    @if (forum.replyCount(t.id)) { · מאת {{ forum.lastPostAuthor(t.id) }} }
+                  </span>
                 </span>
                 <span class="t-replies">
                   <span class="num">{{ forum.replyCount(t.id) }}</span>

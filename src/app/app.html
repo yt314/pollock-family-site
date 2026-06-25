@@ -6,6 +6,9 @@
         <a routerLink="/">הפורום</a>
         <a routerLink="/rules">תקנון</a>
       </nav>
+      <form class="search" (ngSubmit)="search()">
+        <input name="q" [(ngModel)]="searchTerm" placeholder="🔍 חיפוש בפורום" aria-label="חיפוש" />
+      </form>
       <div class="user">
         <span class="hi">שלום, {{ auth.displayName() }}</span>
         @if (auth.isAdmin()) { <span class="admin-tag">מנהל</span> }

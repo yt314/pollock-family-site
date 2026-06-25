@@ -26,6 +26,12 @@ export const routes: Routes = [
     title: 'אשכול',
   },
   {
+    path: 'search',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/search/search').then((m) => m.Search),
+    title: 'חיפוש · הפורום המשפחתי',
+  },
+  {
     path: 'rules',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/rules/rules').then((m) => m.Rules),
