@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { NotificationService } from './services/notification.service';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +13,8 @@ import { AuthService } from './services/auth.service';
 })
 export class App {
   protected auth = inject(AuthService);
+  protected theme = inject(ThemeService);
+  protected notify = inject(NotificationService);
   private router = inject(Router);
 
   searchTerm = '';

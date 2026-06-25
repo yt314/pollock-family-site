@@ -3,6 +3,7 @@
 :root {
   --bg: #f4f6f9;
   --bg-soft: #f8fafc;
+  --card: #ffffff;
   --line: #e3e8ef;
 
   --ink: #1f2a37;
@@ -13,6 +14,23 @@
   --accent-dark: #255a82;
   --accent-soft: #b9d4e8;
   --accent-bg: #f1f7fc;
+}
+
+/* מצב כהה — מופעל ע"י data-theme="dark" על אלמנט ה-html */
+:root[data-theme='dark'] {
+  --bg: #14181d;
+  --bg-soft: #1b2026;
+  --card: #1e242b;
+  --line: #2c343d;
+
+  --ink: #e7ebf0;
+  --ink-soft: #b6bfca;
+  --ink-faint: #8893a0;
+
+  --accent: #5aa9e0;
+  --accent-dark: #4a93c8;
+  --accent-soft: #355064;
+  --accent-bg: #1a2730;
 }
 
 * {

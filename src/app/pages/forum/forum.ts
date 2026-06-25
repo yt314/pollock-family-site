@@ -97,9 +97,9 @@ import { timeAgo } from '../../utils/time';
       .new-btn { margin-inline-start: auto; background: var(--accent); color: #fff; border: 0; padding: 0.6rem 1rem; border-radius: 10px; font-family: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
       .new-btn:hover { background: var(--accent-dark); }
 
-      .new-thread { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
+      .new-thread { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
       .new-thread input, .new-thread textarea { padding: 0.65rem 0.85rem; border: 1px solid var(--line); border-radius: 10px; font-family: inherit; font-size: 0.98rem; background: var(--bg-soft); resize: vertical; }
-      .new-thread input:focus, .new-thread textarea:focus { outline: 2px solid var(--accent); background: #fff; }
+      .new-thread input:focus, .new-thread textarea:focus { outline: 2px solid var(--accent); background: var(--card); }
       .actions { display: flex; gap: 0.6rem; }
       .actions button { padding: 0.55rem 1.1rem; border-radius: 9px; border: 0; font-family: inherit; font-weight: 600; cursor: pointer; }
       .actions button[type='submit'] { background: var(--accent); color: #fff; }
@@ -111,7 +111,7 @@ import { timeAgo } from '../../utils/time';
       .preview { max-width: 220px; border-radius: 10px; border: 1px solid var(--line); display: block; }
       .err { color: #c0392b; font-size: 0.85rem; }
 
-      .threads { list-style: none; margin: 0; padding: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+      .threads { list-style: none; margin: 0; padding: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
       .threads li + li { border-top: 1px solid var(--line); }
       .thread-row { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; text-decoration: none; color: inherit; transition: background 0.15s; }
       .thread-row:hover { background: var(--bg-soft); }

@@ -44,7 +44,7 @@ import { AuthService } from '../../services/auth.service';
     `
       :host { display: flex; min-height: 100dvh; align-items: center; justify-content: center; padding: 1.5rem; }
       .card {
-        background: #fff; border: 1px solid var(--line); border-radius: 16px;
+        background: var(--card); border: 1px solid var(--line); border-radius: 16px;
         padding: 2.5rem 2rem; width: 100%; max-width: 380px; text-align: center;
         box-shadow: 0 10px 40px rgba(30, 50, 80, 0.08);
       }
@@ -57,7 +57,7 @@ import { AuthService } from '../../services/auth.service';
         padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 10px;
         font-size: 1rem; font-family: inherit; background: var(--bg-soft);
       }
-      input:focus { outline: 2px solid var(--accent); border-color: var(--accent); background: #fff; }
+      input:focus { outline: 2px solid var(--accent); border-color: var(--accent); background: var(--card); }
       button {
         margin-top: 0.5rem; padding: 0.8rem; border: 0; border-radius: 10px; cursor: pointer;
         background: var(--accent); color: #fff; font-size: 1rem; font-weight: 600; font-family: inherit;

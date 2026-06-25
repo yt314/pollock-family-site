@@ -63,7 +63,7 @@ import { RouterLink } from '@angular/router';
       .crumbs { font-size: 0.85rem; color: var(--ink-faint); margin-bottom: 1rem; }
       .crumbs a { color: var(--accent); text-decoration: none; }
       .crumbs span { margin: 0 0.4rem; }
-      .paper { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 2rem 2.25rem; }
+      .paper { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 2rem 2.25rem; }
       h1 { font-size: 1.6rem; color: var(--ink); margin: 0 0 1rem; }
       .lead { color: var(--ink-soft); line-height: 1.7; margin: 0 0 1.5rem; }
       ol { padding-inline-start: 1.25rem; margin: 0; display: flex; flex-direction: column; gap: 1rem; }

@@ -32,6 +32,12 @@ export const routes: Routes = [
     title: 'חיפוש · הפורום המשפחתי',
   },
   {
+    path: 'notifications',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/notifications/notifications').then((m) => m.Notifications),
+    title: 'התראות · הפורום המשפחתי',
+  },
+  {
     path: 'member/:name',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/member/member').then((m) => m.Member),

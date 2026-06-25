@@ -55,7 +55,7 @@ import { ForumService } from '../../services/forum.service';
       .crumbs span { margin: 0 0.4rem; }
       h1 { font-size: 1.5rem; color: var(--ink); margin: 0 0 1.25rem; }
 
-      .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.25rem; }
+      .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.25rem; }
       .card h2 { font-size: 1.1rem; margin: 0 0 0.5rem; color: var(--ink); }
       .card p { color: var(--ink-soft); margin: 0 0 1rem; line-height: 1.6; }
       .card.warn { color: var(--ink-soft); text-align: center; }
@@ -67,7 +67,7 @@ import { ForumService } from '../../services/forum.service';
 
       .primary { background: var(--accent); color: #fff; border: 0; padding: 0.65rem 1.3rem; border-radius: 10px; font-family: inherit; font-weight: 600; cursor: pointer; }
       .primary:hover { background: var(--accent-dark); }
-      .file-btn { display: inline-block; background: #fff; border: 1px solid var(--accent); color: var(--accent); padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 600; cursor: pointer; }
+      .file-btn { display: inline-block; background: var(--card); border: 1px solid var(--accent); color: var(--accent); padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 600; cursor: pointer; }
       .file-btn:hover { background: var(--accent-bg); }
       .danger-text { color: #c0392b; }
       .msg { margin-top: 1rem; padding: 0.7rem 1rem; border-radius: 8px; background: #fdecec; color: #c0392b; font-size: 0.9rem; }

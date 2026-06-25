@@ -49,13 +49,13 @@ import { timeAgo } from '../../utils/time';
       .crumbs span { margin: 0 0.4rem; }
 
       .search-box { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; }
-      .search-box input { flex: 1; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 10px; font-family: inherit; font-size: 1rem; background: #fff; }
+      .search-box input { flex: 1; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 10px; font-family: inherit; font-size: 1rem; background: var(--card); }
       .search-box input:focus { outline: 2px solid var(--accent); }
       .search-box button { background: var(--accent); color: #fff; border: 0; padding: 0 1.4rem; border-radius: 10px; font-family: inherit; font-weight: 600; cursor: pointer; }
       .search-box button:hover { background: var(--accent-dark); }
 
       .summary { color: var(--ink-soft); margin: 0 0 1rem; }
-      .results { list-style: none; margin: 0; padding: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+      .results { list-style: none; margin: 0; padding: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
       .results li + li { border-top: 1px solid var(--line); }
       .row { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; text-decoration: none; color: inherit; transition: background 0.15s; }
       .row:hover { background: var(--bg-soft); }

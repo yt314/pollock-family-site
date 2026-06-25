@@ -9,7 +9,7 @@ main {
 }
 
 .topbar {
-  background: #fff;
+  background: var(--card);
   border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
@@ -67,7 +67,7 @@ main {
 .search input:focus {
   outline: none;
   border-color: var(--accent);
-  background: #fff;
+  background: var(--card);
   width: 220px;
 }
 
@@ -110,6 +110,35 @@ main {
 .user button:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.theme-btn {
+  padding: 0.35rem 0.6rem !important;
+  line-height: 1;
+}
+
+.bell {
+  position: relative;
+  text-decoration: none;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.bell-badge {
+  position: absolute;
+  top: -8px;
+  inset-inline-start: -8px;
+  background: #e23b3b;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .foot {

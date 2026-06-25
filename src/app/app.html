@@ -11,8 +11,15 @@
         <input name="q" [(ngModel)]="searchTerm" placeholder="🔍 חיפוש בפורום" aria-label="חיפוש" />
       </form>
       <div class="user">
+        <a class="bell" routerLink="/notifications" title="התראות">
+          🔔
+          @if (notify.count()) { <span class="bell-badge">{{ notify.count() }}</span> }
+        </a>
         <a class="hi" [routerLink]="['/member', auth.displayName()]">שלום, {{ auth.displayName() }}</a>
         @if (auth.isAdmin()) { <span class="admin-tag">מנהל</span> }
+        <button class="theme-btn" (click)="theme.toggle()" [title]="theme.theme() === 'dark' ? 'מצב בהיר' : 'מצב כהה'">
+          {{ theme.theme() === 'dark' ? '☀️' : '🌙' }}
+        </button>
         <button (click)="logout()">יציאה</button>
       </div>
     </div>

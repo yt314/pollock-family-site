@@ -144,12 +144,12 @@ import { timeAgo } from '../../utils/time';
       .badge { margin-inline-end: 0.3rem; }
 
       .admin-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-      .admin-bar button { font-size: 0.8rem; padding: 0.35rem 0.7rem; border: 1px solid var(--line); background: #fff; border-radius: 8px; cursor: pointer; font-family: inherit; color: var(--ink-soft); }
+      .admin-bar button { font-size: 0.8rem; padding: 0.35rem 0.7rem; border: 1px solid var(--line); background: var(--card); border-radius: 8px; cursor: pointer; font-family: inherit; color: var(--ink-soft); }
       .admin-bar button:hover { border-color: var(--accent); color: var(--accent); }
       .admin-bar .danger:hover { border-color: #c0392b; color: #c0392b; }
 
       .posts { display: flex; flex-direction: column; gap: 0.85rem; }
-      .post { display: flex; gap: 0.85rem; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.25rem; }
+      .post { display: flex; gap: 0.85rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.25rem; }
       .post.op { border-color: var(--accent-soft); background: var(--accent-bg); }
       .avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
       .body { flex: 1; min-width: 0; }
@@ -171,17 +171,17 @@ import { timeAgo } from '../../utils/time';
       .att { margin-top: 0.6rem; max-width: 100%; border-radius: 10px; border: 1px solid var(--line); }
       .quote { margin: 0 0 0.6rem; padding: 0.5rem 0.85rem; border-inline-start: 3px solid var(--accent-soft); background: var(--bg-soft); border-radius: 0 8px 8px 0; color: var(--ink-faint); font-size: 0.9rem; white-space: pre-wrap; }
       .post-foot { margin-top: 0.7rem; display: flex; align-items: center; gap: 0.5rem; }
-      .quote-btn { border: 1px solid var(--line); background: #fff; border-radius: 20px; padding: 0.25rem 0.8rem; cursor: pointer; font-family: inherit; font-size: 0.85rem; color: var(--ink-soft); }
+      .quote-btn { border: 1px solid var(--line); background: var(--card); border-radius: 20px; padding: 0.25rem 0.8rem; cursor: pointer; font-family: inherit; font-size: 0.85rem; color: var(--ink-soft); }
       .quote-btn:hover { border-color: var(--accent); color: var(--accent); }
-      .like { display: inline-flex; align-items: center; gap: 0.3rem; border: 1px solid var(--line); background: #fff; border-radius: 20px; padding: 0.25rem 0.7rem; cursor: pointer; font-family: inherit; font-size: 0.85rem; color: var(--ink-soft); transition: border-color 0.15s; }
+      .like { display: inline-flex; align-items: center; gap: 0.3rem; border: 1px solid var(--line); background: var(--card); border-radius: 20px; padding: 0.25rem 0.7rem; cursor: pointer; font-family: inherit; font-size: 0.85rem; color: var(--ink-soft); transition: border-color 0.15s; }
       .like:hover { border-color: #e7a9b4; }
       .like.liked { border-color: #e7a9b4; background: #fdeef1; color: #c0392b; font-weight: 600; }
 
       .locked { margin-top: 1.5rem; text-align: center; background: #f4f4f6; color: var(--ink-faint); padding: 1rem; border-radius: 12px; }
-      .reply { margin-top: 1.5rem; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 1.25rem; }
+      .reply { margin-top: 1.5rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.25rem; }
       .reply h3 { margin: 0 0 0.75rem; font-size: 1rem; color: var(--ink); }
       .reply textarea { width: 100%; box-sizing: border-box; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 10px; font-family: inherit; font-size: 0.98rem; background: var(--bg-soft); resize: vertical; }
-      .reply textarea:focus { outline: 2px solid var(--accent); background: #fff; }
+      .reply textarea:focus { outline: 2px solid var(--accent); background: var(--card); }
       .reply-tools { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.6rem; }
       .file-btn { font-size: 0.85rem; color: var(--accent); cursor: pointer; font-weight: 600; }
       .file-name { font-size: 0.82rem; color: var(--ink-faint); }

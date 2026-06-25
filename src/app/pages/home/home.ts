@@ -87,7 +87,7 @@ import { timeAgo } from '../../utils/time';
       .recent-list { list-style: none; margin: 0; padding: 0; background: var(--accent-bg); border: 1px solid var(--accent-soft); border-radius: 14px; overflow: hidden; }
       .recent-list li + li { border-top: 1px solid var(--accent-soft); }
       .recent-row { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.25rem; text-decoration: none; color: inherit; transition: background 0.15s; }
-      .recent-row:hover { background: #e6f1f9; }
+      .recent-row:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
       .r-main { display: flex; flex-direction: column; flex: 1; min-width: 0; gap: 0.15rem; }
       .r-title { font-weight: 600; color: var(--ink); }
       .r-meta { font-size: 0.78rem; color: var(--ink-faint); }
@@ -101,7 +101,7 @@ import { timeAgo } from '../../utils/time';
       .cat-head h2 { font-size: 1.15rem; margin: 0; color: var(--ink); }
       .cat-head p { font-size: 0.85rem; color: var(--ink-faint); margin: 0.1rem 0 0; }
 
-      .forum-list { list-style: none; margin: 0; padding: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+      .forum-list { list-style: none; margin: 0; padding: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
       .forum-list li + li { border-top: 1px solid var(--line); }
       .forum-row { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; text-decoration: none; color: inherit; transition: background 0.15s; }
       .forum-row:hover { background: var(--bg-soft); }
