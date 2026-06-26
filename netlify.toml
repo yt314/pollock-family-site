@@ -1,0 +1,19 @@
+# הגדרות פריסה ל-Netlify
+[build]
+  command = "npm run build"
+  publish = "dist/pollock-family-site/browser"
+
+# כותרות חוסמות-אינדוקס לכל הנתיבים (גיבוי ל-public/_headers)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive, nosnippet"
+    Referrer-Policy = "no-referrer"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+
+# ניתוב SPA — כל נתיב ל-index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,0 +1,7 @@
+# כותרות HTTP לכל הנתיבים (נתמך ב-Netlify ו-Cloudflare Pages)
+# X-Robots-Tag חזק יותר מתגית meta — חוסם אינדוקס גם בקבצים שאינם HTML.
+/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+  Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff

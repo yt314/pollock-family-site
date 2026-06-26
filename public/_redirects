@@ -1,0 +1,3 @@
+# ניתוב SPA — כל נתיב מוגש דרך index.html כדי שה-router של Angular יעבוד
+# (נתמך ב-Netlify וב-Cloudflare Pages)
+/*    /index.html   200
