@@ -15,6 +15,14 @@ import { ForumService } from '../../services/forum.service';
       } @else {
         <h1>ניהול ונתונים</h1>
 
+        <div class="card status" [class.on]="forum.online">
+          @if (forum.online) {
+            🟢 מחובר ל-Supabase — התוכן משותף בזמן אמת בין כל בני המשפחה.
+          } @else {
+            🟡 מצב מקומי — התוכן נשמר בדפדפן זה בלבד. חבר Supabase כדי לשתף עם כולם (ראו README).
+          }
+        </div>
+
         <div class="card">
           <div class="stat-row">
             <div class="stat"><span class="num">{{ forum.totals().threads }}</span><span>אשכולות</span></div>
@@ -59,6 +67,8 @@ import { ForumService } from '../../services/forum.service';
       .card h2 { font-size: 1.1rem; margin: 0 0 0.5rem; color: var(--ink); }
       .card p { color: var(--ink-soft); margin: 0 0 1rem; line-height: 1.6; }
       .card.warn { color: var(--ink-soft); text-align: center; }
+      .card.status { font-size: 0.92rem; color: var(--ink-soft); border-inline-start: 4px solid #e0b94a; }
+      .card.status.on { border-inline-start-color: #36a665; }
 
       .stat-row { display: flex; gap: 1rem; flex-wrap: wrap; }
       .stat { flex: 1; min-width: 90px; text-align: center; background: var(--bg-soft); border-radius: 10px; padding: 0.85rem; }

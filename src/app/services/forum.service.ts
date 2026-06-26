@@ -1,6 +1,13 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Category, Forum, ForumState, Post, Thread } from '../models/forum.models';
 import { CATEGORIES, FORUMS, SEED_POSTS, SEED_THREADS } from '../data/seed';
+import {
+  postToRow,
+  rowToPost,
+  rowToThread,
+  supabase,
+  threadToRow,
+} from '../supabase/supabase.client';
 
 const STORAGE_KEY = 'pollock-forum-state-v1';
 
@@ -10,13 +17,36 @@ export class ForumService {
   readonly categories: Category[] = CATEGORIES;
   readonly forums: Forum[] = FORUMS;
 
-  // התוכן (אשכולות ותגובות) משתנה ונשמר בדפדפן
+  // התוכן (אשכולות ותגובות) — signal ריאקטיבי שכל הקומפוננטות קוראות ממנו
   private readonly state = signal<ForumState>(this.load());
 
   readonly threads = computed(() => this.state().threads);
   readonly posts = computed(() => this.state().posts);
 
+  // נכון כשמחוברים ל-Supabase (משפיע על טקסטים בממשק הניהול)
+  readonly online = !!supabase;
+
+  constructor() {
+    if (supabase) {
+      // טעינה ראשונית + האזנה חיה לשינויים מכל בני המשפחה
+      void this.reloadAll();
+      supabase
+        .channel('forum-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'threads' }, () =>
+          this.reloadAll(),
+        )
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () =>
+          this.reloadAll(),
+        )
+        .subscribe();
+    }
+  }
+
   private load(): ForumState {
+    // ב-Supabase מתחילים ריק וממלאים אסינכרונית; אחרת — localStorage / seed
+    if (supabase) {
+      return { threads: [], posts: [] };
+    }
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
@@ -30,11 +60,40 @@ export class ForumService {
 
   private persist(next: ForumState): void {
     this.state.set(next);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      /* אחסון מלא/חסום — לא קריטי ל-MVP */
+    // ב-Supabase הכתיבה נעשית פר-פעולה (ראו ה-sync* למטה); אחרת שומרים מקומית
+    if (!supabase) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        /* אחסון מלא/חסום — לא קריטי ל-MVP */
+      }
     }
+  }
+
+  // ---- סנכרון מול Supabase ----
+
+  private async reloadAll(): Promise<void> {
+    if (!supabase) return;
+    const [tRes, pRes] = await Promise.all([
+      supabase.from('threads').select('*'),
+      supabase.from('posts').select('*'),
+    ]);
+    this.state.set({
+      threads: (tRes.data ?? []).map(rowToThread),
+      posts: (pRes.data ?? []).map(rowToPost),
+    });
+  }
+
+  private syncThread(id: string): void {
+    if (!supabase) return;
+    const t = this.state().threads.find((x) => x.id === id);
+    if (t) void supabase.from('threads').upsert(threadToRow(t));
+  }
+
+  private syncPost(id: string): void {
+    if (!supabase) return;
+    const p = this.state().posts.find((x) => x.id === id);
+    if (p) void supabase.from('posts').upsert(postToRow(p));
   }
 
   // ---- שאילתות ----
@@ -133,6 +192,13 @@ export class ForumService {
       threads: [...cur.threads, thread],
       posts: [...cur.posts, firstPost],
     });
+    if (supabase) {
+      // קודם האשכול (מפתח זר), אחריו ההודעה הפותחת
+      void (async () => {
+        await supabase!.from('threads').upsert(threadToRow(thread));
+        await supabase!.from('posts').upsert(postToRow(firstPost));
+      })();
+    }
     return thread;
   }
 
@@ -147,6 +213,7 @@ export class ForumService {
     };
     const cur = this.state();
     this.persist({ ...cur, posts: [...cur.posts, post] });
+    this.syncPost(post.id);
     return post;
   }
 
@@ -158,6 +225,7 @@ export class ForumService {
       ...cur,
       threads: cur.threads.map((t) => (t.id === threadId ? { ...t, pinned: !t.pinned } : t)),
     });
+    this.syncThread(threadId);
   }
 
   toggleLock(threadId: string): void {
@@ -166,6 +234,7 @@ export class ForumService {
       ...cur,
       threads: cur.threads.map((t) => (t.id === threadId ? { ...t, locked: !t.locked } : t)),
     });
+    this.syncThread(threadId);
   }
 
   deleteThread(threadId: string): void {
@@ -174,11 +243,13 @@ export class ForumService {
       threads: cur.threads.filter((t) => t.id !== threadId),
       posts: cur.posts.filter((p) => p.threadId !== threadId),
     });
+    if (supabase) void supabase.from('threads').delete().eq('id', threadId); // התגובות נמחקות ב-cascade
   }
 
   deletePost(postId: string): void {
     const cur = this.state();
     this.persist({ ...cur, posts: cur.posts.filter((p) => p.id !== postId) });
+    if (supabase) void supabase.from('posts').delete().eq('id', postId);
   }
 
   editPost(postId: string, body: string): void {
@@ -187,6 +258,7 @@ export class ForumService {
       ...cur,
       posts: cur.posts.map((p) => (p.id === postId ? { ...p, body: body.trim() } : p)),
     });
+    this.syncPost(postId);
   }
 
   // ---- לייקים ----
@@ -203,6 +275,7 @@ export class ForumService {
           : { ...p, likes: [...likes, name] };
       }),
     });
+    this.syncPost(postId);
   }
 
   hasLiked(postId: string, name: string): boolean {
@@ -235,6 +308,7 @@ export class ForumService {
         t.id === threadId ? { ...t, views: (t.views ?? 0) + 1 } : t,
       ),
     });
+    this.syncThread(threadId);
   }
 
   // ---- גיבוי / שחזור ----
@@ -251,6 +325,10 @@ export class ForumService {
         return false;
       }
       this.persist({ threads: parsed.threads, posts: parsed.posts });
+      if (supabase) {
+        void supabase.from('threads').upsert((parsed.threads as Thread[]).map(threadToRow));
+        void supabase.from('posts').upsert((parsed.posts as Post[]).map(postToRow));
+      }
       return true;
     } catch {
       return false;
